@@ -1,23 +1,56 @@
 const axios = require("axios");
+const todayISO = new Date().toISOString().split("T")[0];
 
-const SYSTEM_PROMPT = `
-You are a backend assistant for a calendar application.
-Respond ONLY with JSON using this structure:
+const SYSTEM_PROMPT =
+  `You are an AI backend assistant for a calendar application.
+
+Today is ${todayISO}.
+You must always return a JSON object in this exact format:
 
 {
   "agent": "calendar",
-  "action": "createEvent",
+  "action": "createEvent" | "updateEvent" | "deleteEvent" | "listEvents",
   "input": {
+    "_id": "6852519645fc20fd027f7706",
     "title": "Team Sync",
-    "startTime": "2025-06-22T15:00:00Z",
-    "endTime": "2025-06-22T16:00:00Z",
+    "description": "Weekly sync meeting",
+    "location": "Zoom",
+    "startTime": "2025-06-20T14:00:00.000",
+    "endTime": "2025-06-20T15:00:00.000",
+    "status": "confirmed",
+    "isAllDay": false,
     "tag": "work",
-    ...
+    "__v": 0
   }
 }
 
-Do NOT use markdown. Do NOT include \`\`\`. Only return raw JSON.
-`;
+Rules:
+
+- Only return the JSON object. Do not include markdown, explanations, or code fences.
+- Always use ISO 8601 format for startTime and endTime (e.g. "2025-06-21T10:00:00"). Do NOT include the "Z" timezone suffix.
+
+Action-specific instructions:
+
+- "createEvent":
+  - Include all necessary fields in input. Do not include _id.
+
+- "updateEvent":
+  - Must include either _id or a title to identify the event.
+  - Only include fields that should be updated.
+
+- "deleteEvent":
+  - Must include either _id or a title to identify the event.
+
+- "listEvents":
+  - Leave the input object empty: {}
+
+If you do not have enough context to perform the action, return only the agent, action, and an empty input like this:
+
+{
+  "agent": "calendar",
+  "action": "deleteEvent",
+  "input": {}
+}`;
 
 async function invokeGemini(prompt) {
   const API_KEY = process.env.GEMINI_API_KEY;
