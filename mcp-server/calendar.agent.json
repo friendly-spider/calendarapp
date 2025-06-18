@@ -1,0 +1,40 @@
+{
+  "name": "calendar",
+  "description": "Manages calendar events",
+  "actions": [
+    {
+      "name": "listEvents",
+      "description": "List all events",
+      "input": {},
+      "output": "array"
+    },
+    {
+      "name": "createEvent",
+      "description": "Create a new calendar event",
+      "input": {
+        "title": "string",
+        "description": "string",
+        "location": "string",
+        "startTime": "string",
+        "endTime": "string",
+        "status": "string",
+        "isAllDay": "boolean",
+        "tag": "string"
+      }
+    },
+    {
+      "name": "updateEvent",
+      "description": "Update an existing event",
+      "input": {
+        "_id": "string"
+      }
+    },
+    {
+      "name": "deleteEvent",
+      "description": "Delete an event by ID",
+      "input": {
+        "_id": "string"
+      }
+    }
+  ]
+}
